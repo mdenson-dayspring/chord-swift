@@ -163,6 +163,112 @@ extension Chord {
             throw LError.notNumber
         }
     }
+
+    func _cos(_: ObjectType) throws -> () {
+        // angle -- real Return cosine of angle degrees
+        try stack.testUnderflow(n: 1)
+        if let a = try stack.pop().toDouble() {
+            try stack.push(cos(a * Double.pi / 180.0))
+        } else {
+            throw LError.notNumber
+        }
+    }
+    func _sin(_: ObjectType) throws -> () {
+        // angle -- real Return sine of angle degrees
+        try stack.testUnderflow(n: 1)
+        if let a = try stack.pop().toDouble() {
+            try stack.push(sin(a * Double.pi / 180.0))
+        } else {
+            throw LError.notNumber
+        }
+    }
+    func _tan(_: ObjectType) throws -> () {
+        // angle -- real Return tangent of angle degrees
+        try stack.testUnderflow(n: 1)
+        if let a = try stack.pop().toDouble() {
+            try stack.push(tan(a * Double.pi / 180.0))
+        } else {
+            throw LError.notNumber
+        }
+    }
+    func _acos(_: ObjectType) throws -> () {
+        // num denom -- angle Return arccosine of num/den in degrees
+        try stack.testUnderflow(n: 2)
+        if let denom = try stack.pop().toDouble(),
+           let num = try stack.pop().toDouble() {
+            if denom == 0.0 {
+                throw LError.runtimeError("divide by zero")
+            }
+            try stack.push(acos(num / denom) * 180.0 / Double.pi)
+        } else {
+            throw LError.notNumber
+        }
+    }
+    func _asin(_: ObjectType) throws -> () {
+        // num denom -- angle Return arcsine of num/den in degrees
+        try stack.testUnderflow(n: 2)
+        if let denom = try stack.pop().toDouble(),
+           let num = try stack.pop().toDouble() {
+            if denom == 0.0 {
+                throw LError.runtimeError("divide by zero")
+            }
+            try stack.push(asin(num / denom) * 180.0 / Double.pi)
+        } else {
+            throw LError.notNumber
+        }
+    }
+    func _atan(_: ObjectType) throws -> () {
+        // num denom -- angle Return arctangent of num/den in degrees
+        try stack.testUnderflow(n: 2)
+        if let denom = try stack.pop().toDouble(),
+           let num = try stack.pop().toDouble() {
+            if denom == 0.0 {
+                throw LError.runtimeError("divide by zero")
+            }
+            try stack.push(atan(num / denom) * 180.0 / Double.pi)
+        } else {
+            throw LError.notNumber
+        }
+    }
+    func _exp(_: ObjectType) throws -> () {
+        // base exponent -- real Raise base to exponent power
+        try stack.testUnderflow(n: 2)
+        let e = try stack.pop()
+        let b = try stack.pop()
+        if let exponent = e.toInt(),
+           let base = b.toInt() {
+            try stack.push(Int(pow(Double(base), Double(exponent))))
+        } else if let exponent = e.toDouble(),
+           let base = b.toDouble() {
+            try stack.push(pow(base, exponent))
+        } else {
+            throw LError.notNumber
+        }
+    }
+    func _ln(_: ObjectType) throws -> () {
+        // num -- real Return natural logarithm (base e)
+        try stack.testUnderflow(n: 1)
+        if let a = try stack.pop().toDouble() {
+            try stack.push(log(a))
+        } else {
+            throw LError.notNumber
+        }
+    }
+    func _log(_: ObjectType) throws -> () {
+        // num -- real Return common logarithm (base 10)
+        try stack.testUnderflow(n: 1)
+        if let a = try stack.pop().toDouble() {
+            try stack.push(log10(a))
+        } else {
+            throw LError.notNumber
+        }
+    }
+    
+    func _rand(_: ObjectType) throws -> () {
+        //  -- int Generate pseudo-random integer
+        try stack.push(Int(arc4random_uniform(UInt32.max)))
+    }
+
     
     func addMathNativeBuiltins() {
         words.append(contentsOf: [
@@ -180,12 +286,25 @@ extension Chord {
             DictEntry(word: NameType("ceiling"), native: ceiling),
             DictEntry(word: NameType("floor"), native: floor),
             DictEntry(word: NameType("round"), native: round),
-            DictEntry(word: NameType("truncate"), native: truncate),
+            DictEntry(word: NameType("truncate"), native: truncate),            
+            
+            DictEntry(word: NameType("cos"), native: _cos),
+            DictEntry(word: NameType("sin"), native: _sin),
+            DictEntry(word: NameType("tan"), native: _tan),
+            DictEntry(word: NameType("acos"), native: _acos),
+            DictEntry(word: NameType("asin"), native: _asin),
+            DictEntry(word: NameType("atan"), native: _atan),
+            DictEntry(word: NameType("exp"), native: _exp),
+            DictEntry(word: NameType("ln"), native: _ln),
+            DictEntry(word: NameType("log"), native: _log),
+            
+            DictEntry(word: NameType("rand"), native: _rand),
         ])
     }
     func compileMathBuiltins() {
         interpret(source: """
         /sq {dup mul} def
+        /sqrt {0.5 exp} def
         """)
     }
 }

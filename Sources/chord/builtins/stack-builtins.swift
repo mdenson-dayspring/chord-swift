@@ -120,8 +120,10 @@ extension Chord {
     
     func addStackNativeBuiltins() {
         words.append(contentsOf: [
-            DictEntry(word: NameType("."),  native: popprint),
-            DictEntry(word: NameType(".s"), native: printStack),
+            DictEntry(word: NameType("="),  native: popprint),
+            DictEntry(word: NameType("=="),  native: popprint),
+            DictEntry(word: NameType("stack"), native: printStack),
+            DictEntry(word: NameType("pstack"), native: printStack),
 
             DictEntry(word: NameType("pop"), native: pop),
             DictEntry(word: NameType("exch"), native: exch),
