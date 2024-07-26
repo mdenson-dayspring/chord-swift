@@ -26,7 +26,7 @@ class Scanner {
         while let char = scanChar() {
             // handle delimiters
             //  (, ), <, >, [, ], {, }, /, and %
-            if let _ = "()<>[]{}/#".firstIndex(of: char) {
+            if let _ = "()<>[]{}`#".firstIndex(of: char) {
                 if ret != "" {
                     // return already scanned a token
                     ptr -= 1
@@ -79,7 +79,7 @@ class Scanner {
             } else if char == "(" {
                 countLeftParans += 1
                 ret.append(char)
-            } else if char == "\\" {
+            } else if char == "~" {
                 if let c = scanChar() {
                     if c == "n" {
                         ret.append("\n")
@@ -91,17 +91,17 @@ class Scanner {
                         ret.append("\u{8}")
                     } else if c == "f" {
                         ret.append("\u{c}")
-                    } else if c == "\\" {
-                        ret.append("\\")
+                    } else if c == "~" {
+                        ret.append("~")
                     } else if c == "(" {
                         ret.append("(")
                     } else if c == ")" {
                         ret.append(")")
                     } else if c == "\n" {
-                        // if backslash at end of line ignore backslash and newline
+                        // if tilde at end of line ignore tilde and newline
                         // i,e. concatenate multi-line string into single line
                     } else {
-                        // ignore (swallow) backslash
+                        // ignore (swallow) tilde
                         ret.append(c)
                     }
                 }

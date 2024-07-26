@@ -129,10 +129,10 @@ extension Chord {
     }
     func compileStackBuiltins() {
         interpret(source: """
-        /drop { pop } def
-        /swap { exch } def
-        /rot { 3 -1 roll } def
-        /over { 1 index } def
+        `drop { pop } def
+        `swap { exch } def
+        `rot { 3 -1 roll } def
+        `over { 1 index } def
         """)
     }
 }

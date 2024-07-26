@@ -8,7 +8,7 @@ class NameType: ObjectType, Equatable, CustomStringConvertible
     }
     
     var type: NameType {
-        get { return NameType("NameTypetype")}
+        get { return NameType("nametype")}
     }
     var executable = false
     var isExecutable: Bool {
@@ -25,14 +25,10 @@ class NameType: ObjectType, Equatable, CustomStringConvertible
         get { return StringType(string: "\(id)") }
     }
     var valueAsSyntaxString: StringType {
-        get { return StringType(string: "/\(id)") }
+        get { return StringType(string: "`\(id)") }
     }
 
     public var description: String {
-        if isExecutable {
-            return "\(id)"
-        } else {
-            return "/\(id)"
-        }
+        return valueAsSyntaxString.stringValue
     }
 }

@@ -38,7 +38,9 @@ class MarkType: ObjectType
     var valueAsSyntaxString: StringType {
         get { return StringType(string: "-mark-")}
     }
-    public var description: String { return "`mark`" }
+    public var description: String {
+        return valueAsSyntaxString.stringValue
+    }
 }
 
 class NullType: ObjectType, CustomStringConvertible
@@ -59,5 +61,7 @@ class NullType: ObjectType, CustomStringConvertible
     var valueAsSyntaxString: StringType {
         get { return StringType(string: "-null-")}
     }
-    public var description: String { return "null" }
+    public var description: String {
+        return valueAsSyntaxString.stringValue
+    }
 }

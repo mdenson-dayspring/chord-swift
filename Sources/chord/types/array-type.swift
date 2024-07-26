@@ -66,14 +66,6 @@ class  ArrayType: ObjectType, CustomStringConvertible, Sequence
     }
     
     public var description: String {
-        var ret = ""
-        for v in value {
-            ret += v.description + " "
-        }
-        if isExecutable {
-            return "{\(ret.trimmingCharacters(in: .whitespaces))}"
-        } else {
-            return "[\(ret.trimmingCharacters(in: .whitespaces))]"
-        }
+        return valueAsSyntaxString.stringValue
     }
 }

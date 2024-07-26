@@ -272,15 +272,15 @@ extension Chord {
     
     func addMathNativeBuiltins() {
         words.append(contentsOf: [
-            DictEntry(word: NameType("add"), native: add),
-            DictEntry(word: NameType("sub"), native: sub),
-            DictEntry(word: NameType("mul"), native: mul),
-            DictEntry(word: NameType("div"), native: div),
+            DictEntry(word: NameType("+"), native: add),
+            DictEntry(word: NameType("-"), native: sub),
+            DictEntry(word: NameType("*"), native: mul),
+            DictEntry(word: NameType("/"), native: div),
             
-            DictEntry(word: NameType("idiv"), native: idiv),
             DictEntry(word: NameType("mod"), native: mod),
+            DictEntry(word: NameType("/int"), native: idiv),
             DictEntry(word: NameType("/mod"), native: divmod),
-            
+
             DictEntry(word: NameType("abs"), native: _abs),
             DictEntry(word: NameType("neg"), native: neg),
             DictEntry(word: NameType("ceiling"), native: ceiling),
@@ -303,8 +303,8 @@ extension Chord {
     }
     func compileMathBuiltins() {
         interpret(source: """
-        /sq {dup mul} def
-        /sqrt {0.5 exp} def
+        `sq {dup *} def
+        `sqrt {0.5 exp} def
         """)
     }
 }

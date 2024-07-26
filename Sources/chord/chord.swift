@@ -49,7 +49,7 @@ class Chord {
                 return 1
             } else if token == "#" {
                 scanner.scanComment()
-            } else if token == "/" {
+            } else if token == "`" {
                 // todo validate next token as a name
                 let value = NameType(scanner.scanToken())
                 if let w = compileDef {
