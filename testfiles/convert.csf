@@ -3,3 +3,5 @@
 /inches {25.4 mul} def /inch {} def
 /feet {12 mul inches} def /foot {feet} def
 /yards {36 mul inches} def /yard {yards} def
+
+1 yard 2 feet add 5.5 inches = 

@@ -14,6 +14,7 @@ class Chord {
         addStackNativeBuiltins()
         addMathNativeBuiltins()
         addTypeNativeBuiltins()
+        addFileNativeBuiltins()
         addArrayNativeBuiltins()
         
         compileStackBuiltins()
@@ -37,25 +38,34 @@ class Chord {
         }
     }
     func interpret(source: String) {
-        let topFrame: Parser = Parser(source: source)
+        let topFrame: Scanner = Scanner(source: source)
         
-        while lex(token: topFrame.scanToken(), parser: topFrame) != 1 { }
+        while lex(token: topFrame.scanToken(), scanner: topFrame) != 1 { }
     }
     
-    func lex(token: String, parser: Parser) -> Int {
+    func lex(token: String, scanner: Scanner) -> Int {
         do {
-            if token == Parser.EOF {
+            if token == Scanner.EOF {
                 return 1
             } else if token == "#" {
-                parser.scanComment()
+                scanner.scanComment()
             } else if token == "/" {
                 // todo validate next token as a name
-                let value = NameType(parser.scanToken())
+                let value = NameType(scanner.scanToken())
                 if let w = compileDef {
                     // push literal integer (compile)
                     w.append(value)
                 } else {
                     // push literal integer (immediate)
+                    try stack.push(value)
+                }
+            } else if token == "(" {
+                let value = StringType(string: scanner.scanString())
+                if let w = compileDef {
+                    // push literal string (compile)
+                    w.append(value)
+                } else {
+                    // push literal string (immediate)
                     try stack.push(value)
                 }
             } else if let value = token.integer {

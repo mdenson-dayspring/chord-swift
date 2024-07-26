@@ -1,15 +1,6 @@
 import Foundation
 
 extension Chord {
-    func popprint(_: ObjectType) throws -> () {
-        try stack.testUnderflow(n: 1)
-        let a = try stack.pop()
-        print(a, terminator: " ")
-    }
-    func printStack(_: ObjectType) throws -> () {
-        try stack.printStack()
-    }
-    
     func pop(_: ObjectType) throws -> () {
         // ( n1 -- )
         try stack.testUnderflow(n: 1)
@@ -120,11 +111,6 @@ extension Chord {
     
     func addStackNativeBuiltins() {
         words.append(contentsOf: [
-            DictEntry(word: NameType("="),  native: popprint),
-            DictEntry(word: NameType("=="),  native: popprint),
-            DictEntry(word: NameType("stack"), native: printStack),
-            DictEntry(word: NameType("pstack"), native: printStack),
-
             DictEntry(word: NameType("pop"), native: pop),
             DictEntry(word: NameType("exch"), native: exch),
             DictEntry(word: NameType("dup"), native: dup),
