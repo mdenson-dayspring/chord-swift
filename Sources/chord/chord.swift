@@ -22,6 +22,20 @@ class Chord {
         interpret(source: arguments)
     }
     
+    func printStack() {
+        do {
+            try stack.printStack()
+        } catch {
+            print("! ", terminator: "")
+        }
+    }
+    func printTop() {
+        if let top = stack.top() {
+            print("\(top) ", terminator: "")
+        } else {
+            print("- ", terminator: "")
+        }
+    }
     func interpret(source: String) {
         let topFrame: Parser = Parser(source: source)
         

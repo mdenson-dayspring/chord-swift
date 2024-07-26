@@ -1,20 +1,53 @@
+import Foundation
+
+let debugStack = true
+let debugTop = true
+
 var args = CommandLine.arguments
 args.removeFirst()
 
-var c = Chord(args.joined(separator: " "))
+var files:[String] = []
+var startSource:String = ""
+var arguments = false
+for a in args {
+    if a == "--" {
+        arguments = true
+    } else {
+        if arguments {
+            startSource.append("\(a) ")
+        } else {
+            files.append(a)
+        }
+    }
+}
 
+var c = Chord("")
 
-c.interpret(source: """
-/inches { 25.4 mul } def /inch { } def
-/feet { 12 mul inches } def /foot { feet } def
-/yards { 36 mul inches } def /yard { yards } def
-""")
+for f in files {
+    do {
+        let text2 = try String(contentsOfFile: f, encoding: .utf8)
+        c.interpret(source: text2)
+    }
+    catch {
+        print("Error info: \(error)")
+    }
+}
 
-print("OK ", terminator: "")
+c.interpret(source: startSource)
+    
+printPrompt()
 while let line = readLine() {
     c.interpret(source: line)
-    print("OK ", terminator: "")
+    printPrompt()
 }
 print("")
 print("bye")
 
+func printPrompt() {
+    if debugStack {
+        c.printStack()
+    } else if debugTop {
+        c.printTop()
+    }
+    print("OK ", terminator: "")
+}

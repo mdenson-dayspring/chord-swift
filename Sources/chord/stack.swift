@@ -183,7 +183,7 @@ struct Stack<T> {
     }
     
     func printStack() throws -> () {
-        print("* " + values.map({"\($0) "}).joined(), terminator: "")
+        print("\u{21a6} " + values.map({"\($0) "}).joined(), terminator: "")
     }
     
     mutating func pop() throws -> T {

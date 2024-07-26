@@ -20,7 +20,7 @@ extension Chord {
         let a = try stack.pop()
         let b = try stack.pop()
         if let nA = a.toInt(), let nB = b.toInt() {
-            let c = nB + nA
+            let c = nB - nA
             try stack.push(c)
         } else if let rA = a.toDouble(), let rB = b.toDouble() {
             let c = rB - rA
@@ -128,7 +128,7 @@ extension Chord {
         let a = try stack.pop()
         if let rA = a.toDouble() {
             let c: Double = rA.rounded(.up)
-            try stack.push(c)
+            try stack.push(Int(c))
         } else {
             throw LError.notInteger
         }
@@ -138,7 +138,7 @@ extension Chord {
         let a = try stack.pop()
         if let rA = a.toDouble() {
             let c: Double = rA.rounded(.down)
-            try stack.push(c)
+            try stack.push(Int(c))
         } else {
             throw LError.notInteger
         }
@@ -148,7 +148,7 @@ extension Chord {
         let a = try stack.pop()
         if let rA = a.toDouble() {
             let c: Double = rA.rounded(.toNearestOrAwayFromZero)
-            try stack.push(c)
+            try stack.push(Int(c))
         } else {
             throw LError.notInteger
         }
@@ -158,7 +158,7 @@ extension Chord {
         let a = try stack.pop()
         if let rA = a.toDouble() {
             let c: Double = rA.rounded(.towardZero)
-            try stack.push(c)
+            try stack.push(Int(c))
         } else {
             throw LError.notNumber
         }
