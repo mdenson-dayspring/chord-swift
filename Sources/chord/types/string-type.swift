@@ -23,10 +23,7 @@ class StringType: ObjectType, CustomStringConvertible, Sequence {
     func toInt() -> Int? { return nil }
     
     var description: String {
-        var ret = "("
-        ret += value.description
-        ret += ")"
-        return ret
+        return valueAsSyntaxString.stringValue
     }
     
     func makeIterator() -> String.Iterator {

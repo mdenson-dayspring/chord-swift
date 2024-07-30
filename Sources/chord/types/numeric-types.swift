@@ -45,3 +45,26 @@ extension Double: ObjectType {
         get { return valueAsString}
     }
 }
+
+extension Bool: ObjectType {
+    var type: NameType {
+        get { return NameType("booltype")}
+    }
+    var isExecutable: Bool {
+        get { return false }
+        set(newValue) { }
+    }
+    func toDouble() -> Double? {
+        return nil
+    }
+    func toInt() -> Int? {
+        return nil
+    }
+    
+    var valueAsString: StringType {
+        get { return StringType(string: "\(self)")}
+    }
+    var valueAsSyntaxString: StringType {
+        get { return valueAsString}
+    }
+}

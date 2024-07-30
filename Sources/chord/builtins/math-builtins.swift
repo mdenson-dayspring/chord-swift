@@ -268,7 +268,6 @@ extension Chord {
         //  -- int Generate pseudo-random integer
         try stack.push(Int(arc4random_uniform(UInt32.max)))
     }
-
     
     func addMathNativeBuiltins() {
         words.append(contentsOf: [

@@ -10,6 +10,7 @@ class Chord {
             DictEntry(word: NameType("{"), native: startCompile, immediate: true),
             DictEntry(word: NameType("}"), native: finishCompile, immediate: true),
         ]
+        addBoolNativeBuiltins()
         addControlNativeBuiltins()
         addStackNativeBuiltins()
         addMathNativeBuiltins()
@@ -17,6 +18,7 @@ class Chord {
         addFileNativeBuiltins()
         addArrayNativeBuiltins()
         
+        compileBoolBuiltins()
         compileStackBuiltins()
         compileMathBuiltins()
         
@@ -125,7 +127,8 @@ class Chord {
             let nextWord = words[wordIndex]
             if !nextWord.immediate, let w = compileDef {
                 if let _ = nextWord.def as? NullType {
-                    // compile call to word
+                    // if there is not a compiled procedure (i.e. is a builtin native)
+                    // then compile call to word
                     name.isExecutable = true
                     w.append(name)
                 } else if let array = nextWord.def as? ArrayType, array.isExecutable  {

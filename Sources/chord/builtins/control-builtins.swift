@@ -4,8 +4,8 @@ extension Chord {
     func branch(_: ObjectType) throws -> () {
         try stack.testUnderflow(n: 2)
         if let procTrue = try stack.pop() as? ArrayType,
-           let a = try stack.pop() as? Int {
-            if a != 0 {
+           let a = try stack.pop() as? Bool {
+            if a {
                 try execute(proc: procTrue)
             }
         } else {
@@ -17,8 +17,8 @@ extension Chord {
         try stack.testUnderflow(n: 3)
         if let procFalse = try stack.pop() as? ArrayType,
            let procTrue = try stack.pop() as? ArrayType,
-           let a = try stack.pop() as? Int {
-            if a != 0 {
+           let a = try stack.pop() as? Bool {
+            if a {
                 try execute(proc: procTrue)
             } else {
                 try execute(proc: procFalse)
