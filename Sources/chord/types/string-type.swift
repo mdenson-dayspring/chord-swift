@@ -1,6 +1,6 @@
 import Foundation
 
-class StringType: ObjectType, CustomStringConvertible, Sequence {
+class StringType: ObjectType, CustomStringConvertible, Sequence, Equatable, Comparable {
     var value: String
     
     init() {
@@ -42,5 +42,12 @@ class StringType: ObjectType, CustomStringConvertible, Sequence {
     }
     var stringValue: String {
         return value
+    }
+    
+    static func < (lhs: StringType, rhs: StringType) -> Bool {
+        lhs.value < rhs.value
+    }
+    static func == (lhs: StringType, rhs: StringType) -> Bool {
+        lhs.value == rhs.value
     }
 }

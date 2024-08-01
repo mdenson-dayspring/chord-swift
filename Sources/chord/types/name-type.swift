@@ -1,6 +1,6 @@
 import Foundation
 
-class NameType: StringType, Equatable
+class NameType: StringType
 {
     init(_ id: String) {
         super.init()

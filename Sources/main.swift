@@ -35,19 +35,4 @@ for f in files {
 
 c.interpret(source: startSource)
     
-printPrompt()
-while let line = readLine() {
-    c.interpret(source: line)
-    printPrompt()
-}
-print("")
-print("bye")
-
-func printPrompt() {
-    if debugStack {
-        c.printStack()
-    } else if debugTop {
-        c.printTop()
-    }
-    print("OK ", terminator: "")
-}
+c.interpret(source: "executive")
