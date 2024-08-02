@@ -126,18 +126,8 @@ class Chord {
         if wordIndex >= 0 {
             let nextWord = words[wordIndex]
             if !nextWord.immediate, let w = compileDef {
-                if let _ = nextWord.def as? NullType {
-                    // if there is not a compiled procedure (i.e. is a builtin native)
-                    // then compile call to word
-                    name.isExecutable = true
-                    w.append(name)
-                } else if let array = nextWord.def as? ArrayType, array.isExecutable  {
-                    // inline compile word
-                    w.append(contentsOf: array)
-                } else {
-                    // insert word to get current value (not closure)
-                    w.append(name)
-                }
+                name.isExecutable = true
+                w.append(name)
             } else {
                 // interpret word (immediate)
                 let w = words[wordIndex]

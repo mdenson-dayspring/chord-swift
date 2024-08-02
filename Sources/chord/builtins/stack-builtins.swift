@@ -64,7 +64,7 @@ extension Chord {
         // /a /b /c 3  1 roll -- /c /a /b
         try stack.testUnderflow(n: 2)
         if let j = try stack.pop().toInt(),
-           let n = try stack.pop().toInt() {
+           let n = try stack.pop().toInt(), n >= 0 {
             try stack.testUnderflow(n: n)
             if j != 0 {
                 let a = ArrayType()
