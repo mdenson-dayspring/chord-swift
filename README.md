@@ -1,5 +1,35 @@
 # Prototype of the Chord language
 
+## Command Usage
+
+The Chord interpreter currently is a command line program that will put the user into a 
+REPL (Read-Eval-Print-Loop).
+
+The command can be invoked passing in Chord source files (CSF) and/or a single line of Chord source.
+
+    $ chord [filename1.csf [... filenamen.csf]] [-- Chord source]
+    
+###### Examples:
+
+    $ chord bingo.csf
+
+In this example the Chord interpreter is started and the source in the file bingo.csf is interpreted. 
+After completion of the file the REPL will be started
+
+    $ chord -- 1 2 3 4
+    
+In this example the Chord interpreter is started and the source after -- is interpreted. On completion 
+of the interpretation the REPL is started with the integers 1, 2, 3, and 4 in the operand stack. It will 
+look something like:
+
+    Chord Version 0.9.1
+    Copyright © 2024 Matthew Denson
+    All rights reserved
+    ↦ 1 2 3 4 chord>
+    
+Note: that the inline source on the commandline is interpreted after the files are interpreted. So any procedures
+defined in the files can be used in the inline source.
+
 ## Syntax
 
 The characters (, ), <, >, [, ], {, }, \`, and # are special. They delimit syntactic entities
