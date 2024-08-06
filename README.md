@@ -77,9 +77,23 @@ is treated by the scanner as just two tokens: abc and 123.
 Numbers in the Chord language include:
 
 - Signed integers, such as
+
     123 −98 43445 0 +17
+    
 - Real numbers, such as
-    −.002 34.5 −3.62 −1. 0.0
+
+    −.002 34.5 −3.62 123.6e10 1.0E−5 1E6 −1. 0.0
+
+An integer consists of an optional sign followed by one or more decimal digits.
+The number is interpreted as a signed decimal integer and is converted to an 
+integer object. If it exceeds the implementation limit for integers, it is 
+converted to a real object.
+
+A real number consists of an optional sign and one or more decimal digits, with
+an embedded period (decimal point), a trailing exponent, or both. The exponent,
+if present, consists of the letter E or e followed by an optional sign and one or
+more decimal digits. The number is interpreted as a real number and is converted
+to a real (floating-point) object.
 
 ### Strings
 
