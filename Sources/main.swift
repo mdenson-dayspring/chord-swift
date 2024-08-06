@@ -6,7 +6,7 @@ let debugTop = true
 var args = CommandLine.arguments
 args.removeFirst()
 
-var files:[String] = []
+var filenames = Array<String>()
 var startSource:String = ""
 var arguments = false
 for a in args {
@@ -16,23 +16,33 @@ for a in args {
         if arguments {
             startSource.append("\(a) ")
         } else {
-            files.append(a)
+            filenames.insert(a, at: 0)
         }
     }
 }
 
 var c = Chord("")
+if filenames.count > 0 {
+    c.interpret(source: filenames.map({"(\($0)) "}).joined() + String(filenames.count))
+    c.interpret(source: """
+`start {   
+# (file1) ... (filen) n -- -
+    1 1 3 -1 roll             # set up initial.increment.limit
+    {pop run} for             # interpret contents of each file
+} def
+""")
+}
+c.interpret(source: "start")
 
-for f in files {
-    do {
-        let text2 = try String(contentsOfFile: f, encoding: .utf8)
-        c.interpret(source: text2)
-    }
-    catch {
-        print("Error info: \(error)")
-    }
+if arguments {
+    c.interpret(source: """
+{\(startSource)}
+exec                      # execute procedure with contents of inline source
+count 0 gt {executive} if # if there are values left of the operand stack then start repl
+""")
 }
 
-c.interpret(source: startSource)
-    
-c.interpret(source: "executive")
+if !arguments && filenames.count == 0 {
+    c.interpret(source: "executive")
+}
+

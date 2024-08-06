@@ -2,33 +2,51 @@
 
 ## Command Usage
 
-The Chord interpreter currently is a command line program that will put the user into a 
-REPL (Read-Eval-Print-Loop).
+The Chord interpreter currently is a command line program.
 
 The command can be invoked passing in Chord source files (CSF) and/or a single line of Chord source.
 
-    $ chord [filename1.csf [... filenamen.csf]] [-- Chord source]
+    $ chord [filename1.csf [... filenamen.csf]] [-- Chord_source]
     
-###### Examples:
+###### Examples A:
 
-    $ chord bingo.csf
+    $ chord
+    Chord Version 0.9.1
+    Copyright © 2024 Matthew Denson
+    All rights reserved
+    ↦ chord>
 
-In this example the Chord interpreter is started and the source in the file bingo.csf is interpreted. 
-After completion of the file the REPL will be started
+In this example the Chord interpreter is started and the REPL (Read-Eval-Print-Loop) is started.
 
+###### Examples B:
+    
     $ chord -- 1 2 3 4
-    
-In this example the Chord interpreter is started and the source after -- is interpreted. On completion 
-of the interpretation the REPL is started with the integers 1, 2, 3, and 4 in the operand stack. It will 
-look something like:
-
     Chord Version 0.9.1
     Copyright © 2024 Matthew Denson
     All rights reserved
     ↦ 1 2 3 4 chord>
+        
+In this example the Chord interpreter is started and the source after -- is interpreted. 
+On completion of the interpretation because there are values the operand stack (the integers 
+1, 2, 3, and 4) the REPL is started.
+
+###### Examples C:
+
+    $ chord bingo.csf
+    $
     
-Note: that the inline source on the commandline is interpreted after the files are interpreted. So any procedures
-defined in the files can be used in the inline source.
+In this example the Chord interpreter is started and the source in the file bingo.csf is interpreted. 
+If the operand stack is empty Chord will exit when finished.
+
+###### Examples D:
+
+    $ chord convert.csf -- "(in mm = ) print 1 yard 2 feet 5.5 inches + + ="
+    in mm = 1663.6999999999998
+    $
+
+In this example the Chord interpreter is started and the source in the file convert.csf is 
+interpreted. Assuming the words yard, feet and inches are defined in convert.csf then the inline
+source will be run and because the operand stack is empty Chord will exit when finished.
 
 ## Syntax
 
@@ -413,6 +431,17 @@ values associated with a and b.
 |        Stack before | Operator        | Stack after     | |
 | ------------------: | :-------------: | --------------- | ------------------ |
 | _any_               | **type**        | _name_          | Return type of any | 
+
+### File Operators
+
+|        Stack before | Operator        | Stack after     | |
+| ------------------: | :-------------: | --------------- | ------------------ |
+| _filename_ | **run** | _–_ | Execute contents of named file | 
+| _string_ | **print** | _–_ | Write string to standard output file |
+| _any_ | **=** | _–_| Write text representation of any to standard output file |
+| _any_ | **==** | _–_ | Write syntactic representation of any to standard output file |
+| _any1 … anyn_ | **stack** | _any1 … anyn_ | Print stack nondestructively using = |
+| _any1 … anyn_ | **pstack** | _any1 … anyn_ | Print stack nondestructively using == |
 
 ### Miscellaneous Operators
 

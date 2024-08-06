@@ -60,9 +60,8 @@ extension Chord {
         try execute(o)
     }
     
-    
     func repl(_: ObjectType) throws -> () {
-        print("Chord Version 0.9.1")
+        print("Chord Version 0.9.2")
         print("Copyright © 2024 Matthew Denson")
         print("All rights reserved")
         printPrompt()
@@ -72,6 +71,10 @@ extension Chord {
         }
         print("")
         print("bye")
+    }
+    
+    func startDefault(_: ObjectType) throws -> () {
+
     }
     
     func printPrompt() {
@@ -90,6 +93,7 @@ extension Chord {
             DictEntry(word: NameType("for"), native: loopFor),
             DictEntry(word: NameType("exec"), native: execWord),
             DictEntry(word: NameType("executive"), native: repl),
+            DictEntry(word: NameType("start"), native: startDefault),
         ])
     }
 }

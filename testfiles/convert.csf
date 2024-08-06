@@ -1,7 +1,8 @@
 #!chord
 
-`inches {25.4 *} def `inch {} def
-`feet {12 * inches} def `foot {feet} def
-`yards {3 * feet} def `yard {yards} def
-
-1 yard 2 feet 5.5 inches + + =      # 5' 5.5" in mm
+`inches {25.4 *} def
+`inch {inches} def
+`feet {12 * inches} def
+`foot {feet} def
+`yards {3 * feet} def
+`yard {yards} def
