@@ -77,6 +77,28 @@ extension Chord {
 
     }
     
+    func bind(_: ObjectType) throws -> () {
+        try stack.testUnderflow(n: 1)
+        guard let proc = try stack.pop() as? ArrayType, proc.isExecutable else {
+            throw LError.typecheck
+        }
+        
+        try stack.push(try bind(proc))
+    }
+
+    func bind(_ proc: ArrayType) throws -> ArrayType {
+        var p = 0
+        while p < proc.count {
+            if let n = proc.get(p) as? NameType, n.isExecutable,
+                let op = try dictionaryStack.load(key: n) as? OperatorType {
+                proc.setPtr(ndx: p, element: op)
+            } else if let inner = proc.get(p) as? ArrayType, inner.isExecutable {
+                proc.setPtr(ndx: p, element: try bind(inner))
+            }
+            p += 1
+        }
+        return proc
+    }
     func printPrompt() {
         if debugStack {
             c.printStack()
@@ -86,14 +108,15 @@ extension Chord {
         print("chord> ", terminator: "")
     }
     
-    func addControlNativeBuiltins() {
-        words.append(contentsOf: [
-            DictEntry(word: NameType("if"), native: branch),
-            DictEntry(word: NameType("ifelse"), native: branchElse),
-            DictEntry(word: NameType("for"), native: loopFor),
-            DictEntry(word: NameType("exec"), native: execWord),
-            DictEntry(word: NameType("executive"), native: repl),
-            DictEntry(word: NameType("start"), native: startDefault),
+    func addControlOperators(dict: DictionaryType) {
+        dict.putAll(operators: [
+            OperatorType(word: NameType("if"), native: branch),
+            OperatorType(word: NameType("ifelse"), native: branchElse),
+            OperatorType(word: NameType("for"), native: loopFor),
+            OperatorType(word: NameType("exec"), native: execWord),
+            OperatorType(word: NameType("bind"), native: bind),
+            OperatorType(word: NameType("executive"), native: repl),
+            OperatorType(word: NameType("start"), native: startDefault),
         ])
     }
 }

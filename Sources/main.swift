@@ -45,4 +45,3 @@ count 0 gt {executive} if # if there are values left of the operand stack then s
 if !arguments && filenames.count == 0 {
     c.interpret(source: "executive")
 }
-

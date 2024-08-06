@@ -36,14 +36,14 @@ extension Chord {
         try stack.printStack()
     }
     
-    func addFileNativeBuiltins() {
-        words.append(contentsOf: [
-            DictEntry(word: NameType("run"),  native: runFile),
-            DictEntry(word: NameType("print"),  native: popPrintString),
-            DictEntry(word: NameType("="),  native: popPrint),
-            DictEntry(word: NameType("=="),  native: popPrintSyntax),
-            DictEntry(word: NameType("stack"), native: printStack),
-            DictEntry(word: NameType("pstack"), native: printStack),
+    func addFileOperators(dict: DictionaryType) {
+        dict.putAll(operators: [
+            OperatorType(word: NameType("run"),  native: runFile),
+            OperatorType(word: NameType("print"),  native: popPrintString),
+            OperatorType(word: NameType("="),  native: popPrint),
+            OperatorType(word: NameType("=="),  native: popPrintSyntax),
+            OperatorType(word: NameType("stack"), native: printStack),
+            OperatorType(word: NameType("pstack"), native: printStack),
         ])
     }
 }

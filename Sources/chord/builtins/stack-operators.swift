@@ -109,30 +109,30 @@ extension Chord {
         try stack.push(stack.count(to: MarkType.MARK))
     }
     
-    func addStackNativeBuiltins() {
-        words.append(contentsOf: [
-            DictEntry(word: NameType("pop"), native: pop),
-            DictEntry(word: NameType("exch"), native: exch),
-            DictEntry(word: NameType("dup"), native: dup),
+    func addStackOperators(dict: DictionaryType) {
+        dict.putAll(operators: [
+            OperatorType(word: NameType("pop"), native: pop),
+            OperatorType(word: NameType("exch"), native: exch),
+            OperatorType(word: NameType("dup"), native: dup),
             
-            DictEntry(word: NameType("copy"), native: copy),
-            DictEntry(word: NameType("index"), native: index),
-            DictEntry(word: NameType("roll"), native: roll),
+            OperatorType(word: NameType("copy"), native: copy),
+            OperatorType(word: NameType("index"), native: index),
+            OperatorType(word: NameType("roll"), native: roll),
 
-            DictEntry(word: NameType("clear"), native: clear),
-            DictEntry(word: NameType("count"), native: count),
-            DictEntry(word: NameType("mark"), native: mark),
-            DictEntry(word: NameType("cleartomark"), native: cleartomark),
-            DictEntry(word: NameType("counttomark"), native: counttomark),
+            OperatorType(word: NameType("clear"), native: clear),
+            OperatorType(word: NameType("count"), native: count),
+            OperatorType(word: NameType("mark"), native: mark),
+            OperatorType(word: NameType("cleartomark"), native: cleartomark),
+            OperatorType(word: NameType("counttomark"), native: counttomark),
 
         ])
     }
     func compileStackBuiltins() {
         interpret(source: """
-        `drop { pop } def
-        `swap { exch } def
-        `rot { 3 -1 roll } def
-        `over { 1 index } def
+        `drop { pop } bind def
+        `swap { exch } bind def
+        `rot { 3 -1 roll } bind def
+        `over { 1 index } bind def
         """)
     }
 }

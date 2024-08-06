@@ -269,41 +269,41 @@ extension Chord {
         try stack.push(Int(arc4random_uniform(UInt32.max)))
     }
     
-    func addMathNativeBuiltins() {
-        words.append(contentsOf: [
-            DictEntry(word: NameType("+"), native: add),
-            DictEntry(word: NameType("-"), native: sub),
-            DictEntry(word: NameType("*"), native: mul),
-            DictEntry(word: NameType("/"), native: div),
+    func addMathOperators(dict: DictionaryType) {
+        dict.putAll(operators: [
+            OperatorType(word: NameType("+"), native: add),
+            OperatorType(word: NameType("-"), native: sub),
+            OperatorType(word: NameType("*"), native: mul),
+            OperatorType(word: NameType("/"), native: div),
             
-            DictEntry(word: NameType("mod"), native: mod),
-            DictEntry(word: NameType("/int"), native: idiv),
-            DictEntry(word: NameType("/mod"), native: divmod),
+            OperatorType(word: NameType("mod"), native: mod),
+            OperatorType(word: NameType("/int"), native: idiv),
+            OperatorType(word: NameType("/mod"), native: divmod),
 
-            DictEntry(word: NameType("abs"), native: _abs),
-            DictEntry(word: NameType("neg"), native: neg),
-            DictEntry(word: NameType("ceiling"), native: ceiling),
-            DictEntry(word: NameType("floor"), native: floor),
-            DictEntry(word: NameType("round"), native: round),
-            DictEntry(word: NameType("truncate"), native: truncate),            
+            OperatorType(word: NameType("abs"), native: _abs),
+            OperatorType(word: NameType("neg"), native: neg),
+            OperatorType(word: NameType("ceiling"), native: ceiling),
+            OperatorType(word: NameType("floor"), native: floor),
+            OperatorType(word: NameType("round"), native: round),
+            OperatorType(word: NameType("truncate"), native: truncate),            
             
-            DictEntry(word: NameType("cos"), native: _cos),
-            DictEntry(word: NameType("sin"), native: _sin),
-            DictEntry(word: NameType("tan"), native: _tan),
-            DictEntry(word: NameType("acos"), native: _acos),
-            DictEntry(word: NameType("asin"), native: _asin),
-            DictEntry(word: NameType("atan"), native: _atan),
-            DictEntry(word: NameType("exp"), native: _exp),
-            DictEntry(word: NameType("ln"), native: _ln),
-            DictEntry(word: NameType("log"), native: _log),
+            OperatorType(word: NameType("cos"), native: _cos),
+            OperatorType(word: NameType("sin"), native: _sin),
+            OperatorType(word: NameType("tan"), native: _tan),
+            OperatorType(word: NameType("acos"), native: _acos),
+            OperatorType(word: NameType("asin"), native: _asin),
+            OperatorType(word: NameType("atan"), native: _atan),
+            OperatorType(word: NameType("exp"), native: _exp),
+            OperatorType(word: NameType("ln"), native: _ln),
+            OperatorType(word: NameType("log"), native: _log),
             
-            DictEntry(word: NameType("rand"), native: _rand),
+            OperatorType(word: NameType("rand"), native: _rand),
         ])
     }
     func compileMathBuiltins() {
         interpret(source: """
-        `sq {dup *} def
-        `sqrt {0.5 exp} def
+        `sq {dup *} bind def
+        `sqrt {0.5 exp} bind def
         """)
     }
 }

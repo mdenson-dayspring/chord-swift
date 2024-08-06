@@ -189,25 +189,25 @@ extension Chord {
         try stack.push(false)
     }
     
-    func addBoolNativeBuiltins() {
-        words.append(contentsOf: [
-            DictEntry(word: NameType("eq"), native: _eq),
-            DictEntry(word: NameType("ne"), native: _ne),
-            DictEntry(word: NameType("ge"), native: _ge),
-            DictEntry(word: NameType("gt"), native: _gt),
-            DictEntry(word: NameType("le"), native: _le),
-            DictEntry(word: NameType("lt"), native: _lt),
+    func addBoolOperators(dict: DictionaryType) {
+        dict.putAll(operators: [
+            OperatorType(word: NameType("eq"), native: _eq),
+            OperatorType(word: NameType("ne"), native: _ne),
+            OperatorType(word: NameType("ge"), native: _ge),
+            OperatorType(word: NameType("gt"), native: _gt),
+            OperatorType(word: NameType("le"), native: _le),
+            OperatorType(word: NameType("lt"), native: _lt),
 
-            DictEntry(word: NameType("and"), native: _and),
-            DictEntry(word: NameType("not"), native: _not),
-            DictEntry(word: NameType("or"), native: _or),
-            DictEntry(word: NameType("xor"), native: _xor),
+            OperatorType(word: NameType("and"), native: _and),
+            OperatorType(word: NameType("not"), native: _not),
+            OperatorType(word: NameType("or"), native: _or),
+            OperatorType(word: NameType("xor"), native: _xor),
 
-            DictEntry(word: NameType("true"), native: _true),
-            DictEntry(word: NameType("false"), native: _false),
+            OperatorType(word: NameType("true"), native: _true),
+            OperatorType(word: NameType("false"), native: _false),
 
-            DictEntry(word: NameType("true"), native: _true),
-            DictEntry(word: NameType("false"), native: _false),
+            OperatorType(word: NameType("true"), native: _true),
+            OperatorType(word: NameType("false"), native: _false),
         ])
     }
     func compileBoolBuiltins() {

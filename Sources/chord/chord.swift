@@ -2,21 +2,21 @@ import Foundation
 
 class Chord {
     var stack: Stack<ObjectType> = Stack<ObjectType>()
-    var words: [DictEntry] = []
+    var dictionaryStack: DictionaryType = DictionaryType()
     
     init(_ arguments: String) {
-        words = [
-            DictEntry(word: NameType("def"), native: defWord),
-            DictEntry(word: NameType("{"), native: startCompile, immediate: true),
-            DictEntry(word: NameType("}"), native: finishCompile, immediate: true),
-        ]
-        addBoolNativeBuiltins()
-        addControlNativeBuiltins()
-        addStackNativeBuiltins()
-        addMathNativeBuiltins()
-        addTypeNativeBuiltins()
-        addFileNativeBuiltins()
-        addArrayNativeBuiltins()
+        dictionaryStack.putAll(operators: [
+            OperatorType(word: NameType("{"), native: startCompile, immediate: true),
+            OperatorType(word: NameType("}"), native: finishCompile, immediate: true),
+        ])
+        addBoolOperators(dict: dictionaryStack)
+        addDictionaryOperators(dict: dictionaryStack)
+        addControlOperators(dict: dictionaryStack)
+        addStackOperators(dict: dictionaryStack)
+        addMathOperators(dict: dictionaryStack)
+        addTypeOperators(dict: dictionaryStack)
+        addFileOperators(dict: dictionaryStack)
+        addArrayOperators(dict: dictionaryStack)
         
         compileBoolBuiltins()
         compileStackBuiltins()
@@ -102,17 +102,10 @@ class Chord {
         return 0
     }
     
-    func findWordIndex(_ token: NameType) -> Int {
-        for p in 1...words.count{
-            if words[words.count - p].word == token {
-                return words.count - p
-            }
-        }
-        return -1
-    }
-    
     func execute(_ obj: ObjectType) throws -> () {
-        if let name = obj as? NameType, name.isExecutable  {
+        if let op = obj as? OperatorType {
+            try op.native(op.def)
+        } else if let name = obj as? NameType, name.isExecutable  {
             try execute(name: name)
         } else if let array = obj as? ArrayType, array.isExecutable  {
             try execute(proc: array)
@@ -122,19 +115,17 @@ class Chord {
     }
     
     func execute(name: NameType) throws -> () {
-        let wordIndex = findWordIndex(name)
-        if wordIndex >= 0 {
-            let nextWord = words[wordIndex]
-            if !nextWord.immediate, let w = compileDef {
+        let value = try dictionaryStack.load(key: name)
+        if let op = value as? OperatorType {
+            if !op.immediate, let w = compileDef {
                 name.isExecutable = true
                 w.append(name)
             } else {
-                // interpret word (immediate)
-                let w = words[wordIndex]
-                try w.native(w.def)
+                try execute(value)
             }
         } else {
-            print("unknown word: \(name)")
+            // interpret word (immediate)
+            try execute(value)
         }
     }
     
@@ -174,30 +165,6 @@ class Chord {
             }
         }
     }
-    func defWord(_: ObjectType) throws -> () {
-        try stack.testUnderflow(n: 2)
-        let v = try stack.pop()
-        let NameType = try stack.pop()
-        if let n = NameType as? NameType {
-            let word = DictEntry(word: n, native: execute, def: v)
-            words.append(contentsOf: [word])
-        } else {
-            throw LError.runtimeError("Unexpected parameter type")
-        }
-    }
 }
 
-class DictEntry {
-    let word: NameType
-    let native: (_: ObjectType) throws -> ()
-    var def: ObjectType = NullType.NULL
-    let immediate: Bool
-    
-    init(word: NameType, native: @escaping (_: ObjectType) throws -> (), def: ObjectType = NullType.NULL, immediate: Bool = false) {
-        self.word = word
-        self.native = native
-        self.def = def
-        self.immediate = immediate
-    }
-}
 

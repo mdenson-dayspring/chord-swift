@@ -98,17 +98,17 @@ extension Chord {
         }
     }
     
-    func addArrayNativeBuiltins() {
-        words.append(contentsOf: [
-            DictEntry(word: NameType("array"), native: newArray),
-            DictEntry(word: NameType("["), native: mark),
-            DictEntry(word: NameType("]"), native: buildArrayToMark),
-            DictEntry(word: NameType("length"), native: arrayLength),
-            DictEntry(word: NameType("get"), native: arrayGet),
-            DictEntry(word: NameType("put"), native: arrayPut),
-            DictEntry(word: NameType("astore"), native: storeArray),
-            DictEntry(word: NameType("aload"), native: loadArray),
-            DictEntry(word: NameType("forall"), native: forallArray),
+    func addArrayOperators(dict: DictionaryType) {
+        dict.putAll(operators: [
+            OperatorType(word: NameType("array"), native: newArray),
+            OperatorType(word: NameType("["), native: mark),
+            OperatorType(word: NameType("]"), native: buildArrayToMark),
+            OperatorType(word: NameType("length"), native: arrayLength),
+            OperatorType(word: NameType("get"), native: arrayGet),
+            OperatorType(word: NameType("put"), native: arrayPut),
+            OperatorType(word: NameType("astore"), native: storeArray),
+            OperatorType(word: NameType("aload"), native: loadArray),
+            OperatorType(word: NameType("forall"), native: forallArray),
         ])
     }
 }

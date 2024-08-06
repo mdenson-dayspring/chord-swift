@@ -7,6 +7,7 @@ enum LError: Error {
     case typecheck
     case notInteger
     case notNumber
+    case undefined
 }
 
 struct Stack<T> {

@@ -8,9 +8,9 @@ extension Chord {
         try stack.push(a.type)
     }
     
-    func addTypeNativeBuiltins() {
-        words.append(contentsOf: [
-            DictEntry(word: NameType("type"), native: pushType),
+    func addTypeOperators(dict: DictionaryType) {
+        dict.putAll(operators: [
+            OperatorType(word: NameType("type"), native: pushType),
         ])
     }
 }
