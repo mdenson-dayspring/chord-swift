@@ -1,6 +1,7 @@
 import Foundation
 
 class Chord {
+    let interpVersion = "0.9.3"
     var stack: Stack<ObjectType> = Stack<ObjectType>()
     var dictionaryStack: DictionaryType = DictionaryType()
     
@@ -109,6 +110,8 @@ class Chord {
             try execute(name: name)
         } else if let array = obj as? ArrayType, array.isExecutable  {
             try execute(proc: array)
+        } else if let s = obj as? StringType, s.isExecutable  {
+            interpret(source: s.stringValue)
         } else {
             try stack.push(obj)
         }
@@ -125,7 +128,12 @@ class Chord {
             }
         } else {
             // interpret word (immediate)
-            try execute(value)
+            if let w = compileDef {
+                name.isExecutable = true
+                w.append(name)
+            } else {
+                try execute(value)
+            }
         }
     }
     

@@ -7,12 +7,6 @@ class NameType: StringType
         self.value = id
     }
     
-    var executable = false
-    override var isExecutable: Bool {
-        get { return executable }
-        set(newValue) { executable = newValue }
-    }
-    
     override var type: NameType {
         get { return NameType("nametype")}
     }

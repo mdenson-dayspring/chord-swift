@@ -233,22 +233,22 @@ Some example Chord program fragments will help clarify the concept of execution.
 Example 1 illustrates the immediate execution of a few operators and
 operands to perform some simple arithmetic.
 
-###### Example 3.1
+###### Example 1
 
     40 60 + 2 /
     
 The interpreter first encounters the literal integer object 40 and pushes it on the
 operand stack. Then it pushes the integer object 60 on the operand stack.
 
-Next, it encounters the executable name object +, which it looks up in the environment 
-of the current dictionary stack. Unless + has been redefined elsewhere, the interpreter 
+Next, it encounters the executable name object **+**, which it looks up in the environment 
+of the current dictionary stack. Unless **+** has been redefined elsewhere, the interpreter 
 finds it associated with an operator object, which it
 executes. This invokes a built-in function that pops the two integer objects off the
 operand stack, adds them together, and pushes the result (a new integer object
 whose value is 100) back on the operand stack.
 
 The rest of the program fragment is executed similarly. The interpreter pushes
-the integer 2 on the operand stack and then executes the name /. The / operator pops 
+the integer 2 on the operand stack and then executes the name **/**. The **/** operator pops 
 two operands off the stack (the integers whose values are 2 and 100),
 divides the second-to-top one by the top one (100 divided by 2, in this case), and
 pushes the real result 50.0 on the stack.
@@ -260,10 +260,11 @@ of where the objects come from.
 
 ### Operand Order
 
-In Example 1, 40 is the first and 60 is the second operand of the + operator.
+In Example 1, 40 is the first and 60 is the second operand of the **+** operator.
 That is, objects are referred to according to the order in which they are pushed on
 the operand stack. This is the reverse of the order in which they are popped off by
-the + operator. Similarly, the result pushed by the + operator is the first operand of the / operator, and 2 is its second operand.
+the + operator. Similarly, the result pushed by the **+** operator is the first 
+operand of the **/** operator, and 2 is its second operand.
 The same terminology applies to the results of an operator. If an operator pushes
 more than one object on the operand stack, the first object pushed is the first
 result. This order corresponds to the usual left-to-right order of appearance of
@@ -287,26 +288,26 @@ the operand stack, as it would any object having the literal attribute.
 Next, the interpreter encounters the executable array {+ 2 /}. Recall that
 { and } enclose a procedure (an executable array or executable packed array object)
 that is produced by the scanner. This procedure contains three elements: the executable 
-name +, the literal integer 2, and the executable name +. The interpreter has not 
+name **+**, the literal integer 2, and the executable name **/**. The interpreter has not 
 encountered these elements yet.
 
 Here is what the interpreter does:
 
 1. Upon encountering this procedure object, the interpreter pushes it on the
 operand stack, even though the object has the executable attribute. This is explained shortly.
-2. The interpreter then encounters the executable name def. Looking up this
-name in the current dictionary stack, it finds def to be associated in
-systemdict with an operator object, which it invokes.
-3. The def operator pops two objects off the operand stack (the procedure
+2. The interpreter then encounters the executable name **def**. Looking up this
+name in the current dictionary stack, it finds **def** to be associated in
+**systemdict** with an operator object, which it invokes.
+3. The **def** operator pops two objects off the operand stack (the procedure
 {+ 2 /} and the name average). It enters this pair into the current dictionary 
-(most likely userdict), creating a new association having the name average
+(most likely **userdict**), creating a new association having the name average
 as its key and the procedure {+ 2 /} as its value.
 4. The interpreter pushes the integer objects 40 and 60 on the operand stack,
 then encounters the executable name average.
 5. It looks up average in the current dictionary stack, finds it to be associated
 with the procedure {+ 2 /}, and executes that procedure. In this case, execution 
-of the array object consists of executing the elements of the array—the
-objects +, 2, and /—in sequence. This has the same effect as executing
+of the array object consists of executing the elements of the array — the
+objects **+**, 2, and **/** — in sequence. This has the same effect as executing
 those objects directly. It produces the same result: the real object 50.0.
 
 Why did the interpreter treat the procedure as data in the first line of the example
@@ -337,13 +338,13 @@ the steps that follow.
 1. The interpreter encounters the executable names a and b in turn and looks
 them up. Assume both names are associated with numbers. Executing the
 numbers causes them to be pushed on the operand stack.
-2. The gt (greater than) operator removes two operands from the stack and compares 
+2. The **gt** (greater than) operator removes two operands from the stack and compares 
 them. If the first operand is greater than the second, it pushes the boolean value 
-true. Otherwise, it pushes false.
+_true_. Otherwise, it pushes _false_.
 3. The interpreter now encounters the procedure objects {a} and {b}, which it
 pushes on the operand stack.
-4. The ifelse operator takes three operands: a boolean object and two procedures.
-If the boolean object’s value is true, ifelse causes the first procedure to be 
+4. The **ifelse** operator takes three operands: a boolean object and two procedures.
+If the boolean object’s value is _true_, **ifelse** causes the first procedure to be 
 executed; otherwise, it causes the second procedure to be executed. All three 
 operands are removed from the operand stack before the selected procedure is
 executed.
@@ -353,6 +354,175 @@ name (either a or b). The interpreter looks up this name and, since it is associ
 with a number, pushes that number on the operand stack. So the result of executing 
 the entire program fragment is to push on the operand stack the greater of the
 values associated with a and b.
+
+### Execution of Specific Types
+
+An object with the literal attribute is _always_ treated as data—pushed on the operand 
+stack by the interpreter—regardless of its type. Even operator objects are
+treated this way if they have the literal attribute.
+
+For many objects, executing them has the same effect as treating them as data.
+This is true of integer, real, boolean, dictionary, mark objects. So the distinction 
+between literal and executable objects of these types is
+meaningless. The following descriptions apply only to objects having the executable attribute.
+
+- An _executable array_ (procedure) object is pushed on
+the operand stack if it is encountered directly by the interpreter. If it is invoked
+_indirectly_ as a result of executing some other object (a name or an operator), it
+is _called_ instead. The interpreter calls a procedure by pushing it on the execution 
+stack and then executing the array elements in turn. When the interpreter
+reaches the end of the procedure, it pops the procedure object off the execution
+stack. (Actually, it pops the procedure object when there is one element
+remaining and then pushes that element; this permits unlimited depth of “tail
+recursion” without overflowing the execution stack.)
+- An _executable string_ object is pushed on the execution stack. The interpreter
+then uses the string as a source of characters to be converted to tokens and
+interpreted according to the PostScript syntax rules. This continues until the
+interpreter reaches the end of the string. Then it pops the string object from the
+execution stack.
+- An _executable name_ object is looked up in the environment of the current dictionary 
+stack and its associated value is executed. The interpreter looks first in
+the top dictionary on the dictionary stack and then in other dictionaries successively 
+lower on the stack. If it finds the name as a key in some dictionary, it
+executes the associated value. To do that, it examines the value’s type and executable 
+attribute and performs the appropriate action described in this section.
+Note that if the value is a procedure, the interpreter executes it. If the interpreter 
+fails to find the name in any dictionary on the dictionary stack, an **undefined**
+error occurs.
+- An _executable operator_ object causes the interpreter to perform one of the builtin 
+operations described in this document.
+- An _executable null_ object causes the interpreter to perform no action. In particular, 
+it does not push the object on the operand stack. 
+
+## Early Name Binding
+
+Normally, when the Chord language scanner encounters an executable name
+in the program being scanned, it simply produces an executable name object; it
+does not look up the value of the name. It looks up the name only when the name
+object is _executed_ by the interpreter. The lookup occurs in the dictionaries that
+are on the dictionary stack at the time of execution.
+
+A name object contained in a procedure is looked up each time the procedure is
+executed. For example, given the definition
+
+    /average {+ 2 /} def
+    
+the names **+** and **/** are looked up, yielding operators to be executed, every
+time the **average** procedure is invoked.
+
+This so-called late binding of names is an important feature of the Chord language. 
+However, there are situations in which early binding is advantageous.
+
+There are two facilities for looking up the values of names before execution: the
+bind operator and the immediately evaluated name.
+
+### bind Operator
+
+The **bind** operator takes a procedure operand and returns a possibly modified
+procedure. There are two kinds of modification: operator substitution and idiom
+recognition.
+
+#### Operator Substitution
+
+The **bind** operator systematically replaces names with operators in a procedure. 
+For each executable name whose value is an _operator_ (not an array, procedure, or 
+other type), it replaces the name with the operator object. This lookup
+occurs in the dictionaries that are on the dictionary stack at the time **bind** is executed. 
+The effect of **bind** applies not only to the procedure being bound but to all
+subsidiary procedures (executable arrays or executable packed arrays) contained
+within it, nested to arbitrary depth.
+
+When the interpreter subsequently executes this procedure, it encounters the
+_operator_ objects, not the _names_ of operators. For example, if the **average** 
+procedure has been defined as
+
+    /average {+ 2 /} bind def
+    
+then during the execution of **average**, the interpreter executes the **+** and **/**
+operators directly, without looking up the names **+** and **/**.
+
+There are two main benefits to using **bind*:
+
+- A procedure that has been bound will execute the sequence of operators that
+were intended when the procedure was defined, even if one or more of the
+operator names have been redefined in the meantime. This benefit is mainly of
+interest in procedures that are part of the Chord implementation, such as
+**dup** and **=**. Those procedures are expected to behave correctly and 
+uniformly, regardless of how a user program may have altered its name environment.
+- A bound procedure executes somewhat faster than one that has not been
+bound, since the interpreter need not look up the operator names each time,
+but can execute the operators directly. This benefit is of interest in most Chord 
+programs. It is worthwhile to apply **bind** to any procedure that will be executed more than a few
+times.
+
+It is important to understand that **bind** replaces only those names whose values
+are _operators_ at the time **bind** is executed. Names whose values are of other types,
+particularly procedures, are not disturbed. If an operator name has been redefined in some 
+dictionary above **systemdict** on the dictionary stack _before_ the execution of **bind**, 
+occurrences of that name in the procedure will not be replaced.
+
+_ **Note:** Certain standard language features are implemented as
+built-in procedures, such as **=** rather than as operators. Also, certain names, such as **true**, **false**,
+and **null**, are associated directly with literal values in **systemdict**. Occurrences of such
+names in a procedure are not altered by bind._ 
+
+### Immediately Evaluated Names
+
+Most implementations include a syntax feature called _immediately evaluated names_. When
+the Chord language scanner encounters a token of the form _\`\`name_ (a name
+preceded by two tildes with no intervening spaces), it immediately looks up the
+name and substitutes the corresponding value. This lookup occurs in the dictionaries 
+on the dictionary stack at the time the scanner encounters the token. If it
+cannot find the name, an **undefined** error occurs.
+
+The substitution occurs _immediately_—even inside an executable array delimited
+by { and }, where execution is deferred. Note that this process is a _substitution_ and
+not an _execution_; that is, the name’s value is not executed, but rather is substituted
+for the name itself, just as if the **load** operator were applied to the name.
+
+The most common use of immediately evaluated names is to perform early binding of 
+objects (other than operators) in procedure definitions. The **bind** operator,
+described in the previous section, performs early binding of operators; binding
+objects of other types requires the explicit use of immediately evaluated names.
+Example 4 illustrates the use of an immediately evaluated name to bind a reference 
+to a dictionary.
+
+###### Example 4
+
+    `mydict << … >> def
+    `proc
+    { ``mydict begin
+      …
+       end
+    } bind def
+    
+In the definition of proc, _\`\`mydict _is an immediately evaluated name. At the 
+moment the scanner encounters the name, it substitutes the name’s current value,
+which is the dictionary defined earlier in the example. The first element of the
+executable array proc is a dictionary object, not a name object. When proc is 
+executed, it will access that dictionary, even if in the meantime mydict has been 
+redefined or the definition has been removed.
+
+Another use of immediately evaluated names is to refer directly to permanent objects: 
+standard dictionaries, such as **systemdict**, and constant literal objects, such
+as the values of **true**, **false**, and **null**. On the other hand, it does not make sense to
+treat the names of variables as immediately evaluated names. Doing so would
+cause a procedure to be irrevocably bound to particular values of those variables.
+
+A word of caution: Indiscriminate use of immediately evaluated names may
+change the behavior of a program. As discussed in “Execution” section, the
+behavior of a procedure differs depending on whether the interpreter encounters
+it directly or as the result of executing some other object (a name or an operator).
+Execution of the program fragments
+
+    {… b …}
+    {… ``b …}
+    
+will have different effects if the value of the name **b** is a procedure. So it is 
+inadvisable to treat the names of operators as immediately evaluated names. A program 
+that does so will malfunction in an environment in which some operators
+have been redefined as procedures. This is why **bind** applies only to names whose
+values are operators, not procedures or other types. 
 
 ## Operator Summary
 
@@ -416,50 +586,55 @@ values associated with a and b.
 
 ### Relational, Boolean, and Bitwise Operators
 
-|        Stack before | Operator        | Stack after                                 | |
-| ------------------: | :-------------: | ------------------------------------------- | --------------- |
-| _any1 any2_ | **eq** | _bool_ | Test equal | 
-| _any1 any2_ | **ne** | _bool_ | Test not equal | 
-| _num1\|str1 num2\|str2_ | **ge** | _bool_ | Test greater than or equal | 
-| _num1\|str1 num2\|str2_ | **gt** | _bool_ | Test greater than | 
-| _num1\|str1 num2\|str2_ | **le** | _bool_ | Test less than or equal | 
-| _num1\|str1 num2\|str2_ | **lt** | _bool_ | Test less than | 
-| _bool1\|int1 bool2\|int2_ | **and** | _bool3|int3_ | Perform logical|bitwise and | 
-| _bool1\|int1_ | **not** | _bool2|int2_ | Perform logical|bitwise not | 
-| _bool1\|int1 bool2\|int2_ | **or** | _bool3|int3_ | Perform logical|bitwise inclusive or | 
-| _bool1\|int1 bool2\|int2_ | **xor** | _bool3|int3_ | Perform logical|bitwise exclusive or | 
-| _–_ | **true** | _true_ | Return boolean value true | 
-| _–_ | **false** | _false_ | Return boolean value false | 
+|              Stack before | Operator  | Stack after   |                                       |
+| ------------------------: | :-------: | ------------- | ------------------------------------- |
+|               _any1 any2_ | **eq**    | _bool_        | Test equal                            | 
+|               _any1 any2_ | **ne**    | _bool_        | Test not equal                        | 
+|   _num1\|str1 num2\|str2_ | **ge**    | _bool_        | Test greater than or equal            | 
+|   _num1\|str1 num2\|str2_ | **gt**    | _bool_        | Test greater than                     | 
+|   _num1\|str1 num2\|str2_ | **le**    | _bool_        | Test less than or equal               | 
+|   _num1\|str1 num2\|str2_ | **lt**    | _bool_        | Test less than                        | 
+| _bool1\|int1 bool2\|int2_ | **and**   | _bool3\|int3_ | Perform logical\|bitwise and          | 
+|             _bool1\|int1_ | **not**   | _bool2\|int2_ | Perform logical\|bitwise not          | 
+| _bool1\|int1 bool2\|int2_ | **or**    | _bool3\|int3_ | Perform logical\|bitwise inclusive or | 
+| _bool1\|int1 bool2\|int2_ | **xor**   | _bool3\|int3_ | Perform logical\|bitwise exclusive or | 
+|                       _–_ | **true**  | _true_        | Return boolean value true             | 
+|                       _–_ | **false** | _false_       | Return boolean value false            | 
 
 ### Control Operators
 
-|        Stack before | Operator        | Stack after                                 | |
-| ------------------: | :-------------: | ------------------------------------------- | --------------- |
-| _any_ | **exec** | _–_ | Execute arbitrary object | 
-| _bool proc_ | **if** | _–_ | Execute proc if bool is true | 
-| _bool proc1 proc2_ | **ifelse** | _–_ | Execute proc1 if bool is true, proc2 if false | 
-| _initial increment limit proc_ | **for** | _–_ | Execute proc with values from initial by steps of increment to limit | 
+|                   Stack before | Operator   | Stack after  | |
+| -----------------------------: | :--------: | ------------ | --------------- |
+|                          _any_ | **exec**   | _–_          | Execute arbitrary object | 
+|                    _bool proc_ | **if**     | _–_          | Execute proc if bool is true | 
+|             _bool proc1 proc2_ | **ifelse** | _–_          | Execute proc1 if bool is true, proc2 if false | 
+| _initial increment limit proc_ | **for**    | _–_          | Execute proc with values from initial by steps of increment to limit | 
 
 ### Type, Attribute, and Conversion Operators
 
-|        Stack before | Operator        | Stack after     | |
-| ------------------: | :-------------: | --------------- | ------------------ |
-| _any_               | **type**        | _name_          | Return type of any | 
+|   Stack before | Operator   | Stack after  |                           |
+| -------------: | :--------: | ------------ | ------------------------- |
+|          _any_ | **type**   | _name_       | Return type of any        | 
+|          _any_ | **cvlit**  | _any_        | Make object literal       | 
+|          _any_ | **cvx**    | _any_        | Make object executable    | 
+|          _any_ | **xcheck** | _bool_       | Test executable attribute | 
 
 ### File Operators
 
-|        Stack before | Operator        | Stack after     | |
-| ------------------: | :-------------: | --------------- | ------------------ |
-| _filename_ | **run** | _–_ | Execute contents of named file | 
-| _string_ | **print** | _–_ | Write string to standard output file |
-| _any_ | **=** | _–_| Write text representation of any to standard output file |
-| _any_ | **==** | _–_ | Write syntactic representation of any to standard output file |
-| _any1 … anyn_ | **stack** | _any1 … anyn_ | Print stack nondestructively using = |
+|  Stack before | Operator   | Stack after   | |
+| ------------: | :--------: | ------------- | ------------------ |
+|    _filename_ | **run**    | _–_           | Execute contents of named file | 
+|      _string_ | **print**  | _–_           | Write string to standard output file |
+|         _any_ | **=**      | _–_           | Write text representation of any to standard output file |
+|         _any_ | **==**     | _–_           | Write syntactic representation of any to standard output file |
+| _any1 … anyn_ | **stack**  | _any1 … anyn_ | Print stack nondestructively using = |
 | _any1 … anyn_ | **pstack** | _any1 … anyn_ | Print stack nondestructively using == |
 
 ### Miscellaneous Operators
 
-|        Stack before | Operator        | Stack after         | |
-| ------------------: | :-------------: | ------------------- | --------------- |
-| _–_                 | **null**        | _null_              | Push null on stack |
-| _–_                 | **executive**   | _–_                 | Invoke interactive executive |
+|  Stack before | Operator      | Stack after | |
+| ------------: | :-----------: | ----------- | --------------- |
+|        _prod_ | **bind**      | _proc_      | Replace operator names in _proc_ with operators |
+|           _–_ | **null**      | _null_      | Push _null_ on stack |
+|           _–_ | **version**   | _string_    | Return interpreter version |
+|           _–_ | **executive** | _–_         | Invoke interactive executive |

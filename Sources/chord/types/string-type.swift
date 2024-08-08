@@ -14,12 +14,13 @@ class StringType: ObjectType, CustomStringConvertible, Sequence, Equatable, Comp
         get { return NameType("srringtype") }
     }
     
+    var executable = false
     var isExecutable: Bool {
-        get { return false }
-        set(newValue) { }
+        get { return executable }
+        set(newValue) { executable = newValue }
     }
     
-    func toDouble() -> Double? { return nil }    
+    func toDouble() -> Double? { return nil }
     func toInt() -> Int? { return nil }
     
     var description: String {

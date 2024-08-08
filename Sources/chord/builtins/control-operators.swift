@@ -61,7 +61,7 @@ extension Chord {
     }
     
     func repl(_: ObjectType) throws -> () {
-        print("Chord Version 0.9.2")
+        print("Chord Version \(interpVersion)")
         print("Copyright © 2024 Matthew Denson")
         print("All rights reserved")
         printPrompt()
@@ -109,14 +109,17 @@ extension Chord {
     }
     
     func addControlOperators(dict: DictionaryType) {
+        dict.put(key: NameType("version"), value: StringType(string: interpVersion))
+        dict.put(key: NameType("null"), value: NullType.NULL)
         dict.putAll(operators: [
             OperatorType(word: NameType("if"), native: branch),
             OperatorType(word: NameType("ifelse"), native: branchElse),
             OperatorType(word: NameType("for"), native: loopFor),
             OperatorType(word: NameType("exec"), native: execWord),
             OperatorType(word: NameType("bind"), native: bind),
-            OperatorType(word: NameType("executive"), native: repl),
-            OperatorType(word: NameType("start"), native: startDefault),
         ])
+        let exec = OperatorType(word: NameType("executive"), native: repl)
+        dict.put(key: NameType("executive"), value: exec)
+        dict.put(key: NameType("start"), value: exec)
     }
 }

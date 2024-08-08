@@ -22,26 +22,17 @@ for a in args {
 }
 
 var c = Chord("")
-if filenames.count > 0 {
+if arguments || filenames.count > 0 {
+    c.interpret(source: "(\(startSource))")
     c.interpret(source: filenames.map({"(\($0)) "}).joined() + String(filenames.count))
     c.interpret(source: """
 `start {   
-# (file1) ... (filen) n -- -
+# (startSource) (file1) ... (filen) n -- -
     1 1 3 -1 roll             # set up initial.increment.limit
     {pop run} for             # interpret contents of each file
+    cvx exec                  # execute procedure with contents of inline source
+    count 0 gt {executive} if # if there are values left of the operand stack then start repl
 } def
 """)
 }
 c.interpret(source: "start")
-
-if arguments {
-    c.interpret(source: """
-{\(startSource)}
-exec                      # execute procedure with contents of inline source
-count 0 gt {executive} if # if there are values left of the operand stack then start repl
-""")
-}
-
-if !arguments && filenames.count == 0 {
-    c.interpret(source: "executive")
-}

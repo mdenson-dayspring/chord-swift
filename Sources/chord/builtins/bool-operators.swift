@@ -179,17 +179,10 @@ extension Chord {
             throw LError.typecheck
         }
     }
-
-    func _true(_: ObjectType) throws -> () {
-        //  -- true
-        try stack.push(true)
-    }
-    func _false(_: ObjectType) throws -> () {
-        //  -- false
-        try stack.push(false)
-    }
     
     func addBoolOperators(dict: DictionaryType) {
+        dict.put(key: NameType("true"), value: true)
+        dict.put(key: NameType("false"), value: false)
         dict.putAll(operators: [
             OperatorType(word: NameType("eq"), native: _eq),
             OperatorType(word: NameType("ne"), native: _ne),
@@ -202,17 +195,10 @@ extension Chord {
             OperatorType(word: NameType("not"), native: _not),
             OperatorType(word: NameType("or"), native: _or),
             OperatorType(word: NameType("xor"), native: _xor),
-
-            OperatorType(word: NameType("true"), native: _true),
-            OperatorType(word: NameType("false"), native: _false),
-
-            OperatorType(word: NameType("true"), native: _true),
-            OperatorType(word: NameType("false"), native: _false),
         ])
     }
     func compileBoolBuiltins() {
         interpret(source: """
-
         """)
     }
 }
