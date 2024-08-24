@@ -6,7 +6,7 @@ extension Chord {
         if let procTrue = try stack.pop() as? ArrayType,
            let a = try stack.pop() as? Bool {
             if a {
-                try execute(proc: procTrue)
+                executionStack.execute(procTrue)
             }
         } else {
             throw LError.runtimeError("Bad parameter")
@@ -19,9 +19,9 @@ extension Chord {
            let procTrue = try stack.pop() as? ArrayType,
            let a = try stack.pop() as? Bool {
             if a {
-                try execute(proc: procTrue)
+                executionStack.execute(procTrue)
             } else {
-                try execute(proc: procFalse)
+                executionStack.execute(procFalse)
             }
         } else {
             throw LError.runtimeError("Bad parameter")
@@ -34,21 +34,7 @@ extension Chord {
            let limit = try stack.pop().toDouble(),
            let increment = try stack.pop().toDouble(),
            let initial = try stack.pop().toDouble() {
-            var integers = false
-            if (limit.rounded() == limit && increment.rounded() == increment) {
-                integers = true
-            }
-            var i = initial
-            while (i <= limit && increment > 0) ||
-                    (i >= limit && increment < 0) {
-                if integers {
-                    try stack.push(Int(i.rounded()))
-                } else {
-                    try stack.push(i)
-                }
-                try execute(proc: proc)
-                i += increment
-            }
+            executionStack.execute(ForLoopContext(context: self, initial: initial, increment: increment, limit: limit, proc: proc))
         } else {
             throw LError.runtimeError("Bad parameter")
         }
@@ -57,7 +43,7 @@ extension Chord {
     func execWord(_: ObjectType) throws -> () {
         try stack.testUnderflow(n: 1)
         let o = try stack.pop()
-        try execute(o)
+        executionStack.execute(o)
     }
     
     func repl(_: ObjectType) throws -> () {
@@ -106,6 +92,20 @@ extension Chord {
             c.printTop()
         }
         print("chord> ", terminator: "")
+    }
+    func printStack() {
+        do {
+            try stack.printStack()
+        } catch {
+            print("! ", terminator: "")
+        }
+    }
+    func printTop() {
+        if let top = stack.top() {
+            print("\(top) ", terminator: "")
+        } else {
+            print("- ", terminator: "")
+        }
     }
     
     func addControlOperators(dict: DictionaryType) {

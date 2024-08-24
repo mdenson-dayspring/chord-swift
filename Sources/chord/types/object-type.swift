@@ -50,7 +50,7 @@ class NullType: ObjectType, CustomStringConvertible
         get { return NameType("nulltype")}
     }
     var isExecutable: Bool {
-        get { return false }
+        get { return true }
         set(newValue) { }
     }
     func toDouble() -> Double? { return nil }

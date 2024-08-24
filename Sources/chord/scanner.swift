@@ -1,6 +1,6 @@
 import Foundation
 
-class Scanner {
+class Scanner : CustomStringConvertible{
     static let EOF = "\u{04}"
     let source: String
     var ptr: Int = 0
@@ -110,5 +110,9 @@ class Scanner {
             }
         }
         return ret
+    }
+    
+    public var description: String {
+        return "Scanner \(ptr) (\(source))"
     }
 }

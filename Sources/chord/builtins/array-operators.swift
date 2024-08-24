@@ -89,10 +89,7 @@ extension Chord {
         try stack.testUnderflow(n: 2)
         if let proc = try stack.pop() as? ArrayType,
             let a = try stack.pop() as? ArrayType {
-            for el in a {
-                try stack.push(el)
-                try execute(proc: proc)
-            }
+            executionStack.execute(ForAllLoopContext(context: self, array: a, proc: proc))
         } else {
             throw LError.runtimeError("Bad parameter")
         }

@@ -18,7 +18,7 @@ class OperatorType: ObjectType, CustomStringConvertible
         get { return NameType("operatortype")}
     }
     var isExecutable: Bool {
-        get { return true }
+        get { return false }
         set(newValue) { }
     }
     func toDouble() -> Double? { return nil }
