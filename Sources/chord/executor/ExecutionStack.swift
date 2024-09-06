@@ -26,27 +26,37 @@ class ExecutionStack {
     }
     
     func runLoop() {
-        guard let context = chord else {
+        guard let _ = chord else {
             print("unexpected error (no context)")
             return
         }
         while count > 0 {
-            print("executionStack \(contexts)")
-            do {
-                if let next = try top.step() {
-                    _ = pop()
-                    if let _ = next as? NullType {
-                        // finish
-                    } else {
-                        push(ExecContext(context: context, object: next))
+            let t = top
+            if t.isFinished {
+                _ = pop()
+            } else {
+                let prevCount = count
+                do {
+                    try t.step()
+                    if t.isFinished && prevCount == count {
+                        _ = pop()
                     }
+                } catch {
+                    print("unexpected error")
                 }
-            } catch {
-                print("unexpected error")
             }
         }
     }
 
+    func exitLoopContext() {
+        while !(top is LoopContext) && count > 0 {
+            let _ = pop()
+        }
+        if count > 0 {
+            let _ = pop()
+        }
+    }
+    
     func execute(_ obj: ObjectType) {
         guard let chord = self.chord else {
             return

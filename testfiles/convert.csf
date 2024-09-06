@@ -6,3 +6,6 @@
 `foot {feet} def
 `yards {3 * feet} def
 `yard {yards} def
+
+`t {dup 2 eq {exit} if} bind def
+5 {t 1 -} repeat

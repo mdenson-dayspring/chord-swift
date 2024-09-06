@@ -7,8 +7,26 @@
 
 import Foundation
 class LoopContext: ExecContext {
+    let loopProc: ArrayType
+    
+    init(context: Chord, proc: ArrayType) {
+        self.loopProc = proc
+        
+        super.init(context: context, object: NullType.NULL)
+    }
+    
+    override var isFinished: Bool {
+        get {
+            return false
+        }
+    }
+
+    override func step() throws {
+        try execute(object: loopProc)
+    }
+    
     override public var description: String {
-        return "LC: oops"
+        return "LC"
     }
 }
 
@@ -16,7 +34,6 @@ class ForLoopContext: LoopContext {
     let initial: Double;
     let increment: Double;
     let limit: Double;
-    let loopProc: ArrayType
     let integers: Bool
     var current: Double
     var firstTime: Bool
@@ -25,7 +42,6 @@ class ForLoopContext: LoopContext {
         self.initial = initial
         self.increment = increment
         self.limit = limit
-        self.loopProc = proc
         
         if (limit.rounded() == limit && increment.rounded() == increment) {
             integers = true
@@ -35,10 +51,17 @@ class ForLoopContext: LoopContext {
         firstTime = true
         current = initial
         
-        super.init(context: context, object: NullType.NULL)
+        super.init(context: context, proc: proc)
     }
     
-    override func step() throws -> ObjectType? {
+    override var isFinished: Bool {
+        get {
+            return !((current <= limit && increment > 0) ||
+                (current >= limit && increment < 0))
+        }
+    }
+    
+    override func step() throws {
         if firstTime {
             firstTime = false
         } else {
@@ -53,10 +76,7 @@ class ForLoopContext: LoopContext {
                 try chord.stack.push(current)
             }
             
-            try execute(loopProc)
-            return nil
-        } else {
-            return NullType.NULL
+            try execute(object: loopProc)
         }
     }
     
@@ -67,32 +87,61 @@ class ForLoopContext: LoopContext {
 
 class ForAllLoopContext: LoopContext {
     let array: ArrayType;
-    let loopProc: ArrayType
     var current: Int
     
     init(context: Chord, array: ArrayType, proc: ArrayType) {
         self.array = array
-        self.loopProc = proc
 
         current = -1
         
-        super.init(context: context, object: NullType.NULL)
+        super.init(context: context, proc: proc)
     }
     
-    override func step() throws -> ObjectType? {
+    override var isFinished: Bool {
+        get {
+            return !(current < array.count)
+        }
+    }
+
+    override func step() throws {
         current += 1
 
-        if (current < array.count) {
+        if current < array.count {
             try chord.stack.push(array.get(current))
             
-            try execute(loopProc)
-            return nil
-        } else {
-            return NullType.NULL
+            try execute(object: loopProc)
         }
     }
     
     override public var description: String {
         return "FALC: \(current) \(array.count)"
+    }
+}
+
+class RepeatLoopContext: LoopContext {
+    var current: Int
+    
+    init(context: Chord, count: Int, proc: ArrayType) {
+        current = count
+        
+        super.init(context: context, proc: proc)
+    }
+    
+    override var isFinished: Bool {
+        get {
+            return !(current >= 0)
+        }
+    }
+
+    override func step() throws {
+        current -= 1
+
+        if current >= 0 {
+            try execute(object: loopProc)
+        }
+    }
+    
+    override public var description: String {
+        return "RLC: \(current)"
     }
 }

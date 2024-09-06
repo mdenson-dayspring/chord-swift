@@ -5,32 +5,31 @@ class Procedure: CustomStringConvertible {
     let proc: ArrayType
     var instPtr: Int
     
+    var isTail: Bool {
+        get {
+            return instPtr == proc.count - 1
+        }
+    }
+    var isFinished: Bool {
+        get {
+            return instPtr >= proc.count
+        }
+    }
     init(context: ExecContext, array: ArrayType) {
         self.context = context
         self.proc = array
         self.instPtr = 0
     }
     
-    func step() throws -> ObjectType? {
+    func step() throws {
         if let _ = proc.get(instPtr) as? ArrayType {
             // special handling to keep executable arrays
             //  from executing when executing an array of objects
             try context.chord.stack.push(proc.get(instPtr))
         } else {
-            try context.execute(proc.get(instPtr))
+            try context.execute(object: proc.get(instPtr))
         }
         instPtr += 1
-        
-        // tail recursion handling
-        //  return last object in proc
-        //  so that proc can be popped from
-        //  execution stack before the final
-        //  operation
-        if instPtr == proc.count - 1 {
-            return proc.get(instPtr)
-        } else {
-            return nil
-        }
     }
     
     public var description: String {

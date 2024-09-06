@@ -8,7 +8,13 @@ class Scanner : CustomStringConvertible{
     init(source:String) {
         self.source = source
     }
-     
+    
+    var isFinished: Bool {
+        get {
+            return ptr >= source.count
+        }
+    }
+    
     func scanChar() -> Character? {
         if ptr >= source.count {
             return nil

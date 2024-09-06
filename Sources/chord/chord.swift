@@ -1,7 +1,7 @@
 import Foundation
 
 class Chord {
-    let interpVersion = "0.9.4"
+    let interpVersion = "0.9.5"
     var stack: Stack<ObjectType> = Stack<ObjectType>()
     var dictionaryStack: DictionaryType = DictionaryType()
     var executionStack: ExecutionStack = ExecutionStack()

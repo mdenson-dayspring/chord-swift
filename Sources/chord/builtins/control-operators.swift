@@ -38,6 +38,29 @@ extension Chord {
         } else {
             throw LError.runtimeError("Bad parameter")
         }
+    }    
+    
+    func loopRepeat(_: ObjectType) throws -> () {
+        try stack.testUnderflow(n: 2)
+        if let proc = try stack.pop() as? ArrayType,
+           let count = try stack.pop().toInt() {
+            executionStack.execute(RepeatLoopContext(context: self, count: count, proc: proc))
+        } else {
+            throw LError.runtimeError("Bad parameter")
+        }
+    }    
+
+    func loop(_: ObjectType) throws -> () {
+        try stack.testUnderflow(n: 1)
+        if let proc = try stack.pop() as? ArrayType {
+            executionStack.execute(LoopContext(context: self, proc: proc))
+        } else {
+            throw LError.runtimeError("Bad parameter")
+        }
+    }
+ 
+    func exitLoop(_: ObjectType) throws -> () {
+        executionStack.exitLoopContext()
     }
     
     func execWord(_: ObjectType) throws -> () {
@@ -115,7 +138,10 @@ extension Chord {
             OperatorType(word: NameType("if"), native: branch),
             OperatorType(word: NameType("ifelse"), native: branchElse),
             OperatorType(word: NameType("for"), native: loopFor),
+            OperatorType(word: NameType("loop"), native: loop),
+            OperatorType(word: NameType("repeat"), native: loopRepeat),
             OperatorType(word: NameType("exec"), native: execWord),
+            OperatorType(word: NameType("exit"), native: exitLoop),
             OperatorType(word: NameType("bind"), native: bind),
         ])
         let exec = OperatorType(word: NameType("executive"), native: repl)

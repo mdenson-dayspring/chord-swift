@@ -5,6 +5,7 @@ class ExecContext: CustomStringConvertible {
     var scanner: Scanner?
     var proc: Procedure?
     var obj: ObjectType?
+    var objExecuted: Bool = false
     
     init(context: Chord, object: ObjectType) {
         self.chord = context
@@ -13,43 +14,82 @@ class ExecContext: CustomStringConvertible {
             if proc.count > 1 {
                 self.proc = Procedure(context: self, array: proc)
             } else if proc.count == 1 {
-                self.obj = proc.get(0)
+                let step = proc.get(0)
+                if let name = step as? NameType, name.isExecutable {
+                    findExecutable(step: step, name: name)
+                } else {
+                    self.obj = step
+                }
             } else {
                 self.obj = NullType.NULL
             }
         } else if let n = object as? NameType, n.isExecutable  {
-            self.obj = n
+            findExecutable(step: object, name: n)
         } else if let s = object as? StringType, s.isExecutable  {
             self.scanner = Scanner(source: s.stringValue)
         } else {
             self.obj = object
         }
     }
-    
-    func step() throws -> ObjectType? {
-        if let scan = scanner {
-            return lex(token: scan.scanToken())
-        } else if let p = proc {
-            return try p.step()
-        } else if let o = obj {
-            try execute(o)
-            return NullType.NULL
-        } else {
-            // What to do with this?
-            return NullType.NULL
+    var isTailOperation: Bool {
+        get {
+            if let _ = obj {
+                return true
+            } else if let p = proc {
+                return p.isTail
+            } else {
+                return false
+            }
+        }
+    }
+    var isFinished: Bool {
+        get {
+            if let _ = obj {
+                return objExecuted
+            } else if let p = proc {
+                return p.isFinished
+            } else if let s = scanner {
+                return s.isFinished
+            } else {
+                return false
+            }
         }
     }
     
-    func lex(token: String) -> ObjectType? {
+    func findExecutable(step: ObjectType, name: NameType) {
+        do {
+            let v = try lookupName(name: name)
+            if let array = v as? ArrayType, array.isExecutable {
+                self.proc = Procedure(context:self, array: array)
+            } else if let op = v as? OperatorType {
+                self.obj = op
+            } else {
+                self.obj = step
+            }
+        } catch {
+            self.obj = step
+        }
+    }
+    
+    func step() throws {
+        if let scan = scanner {
+            lex(token: scan.scanToken())
+        } else if let p = proc {
+            try p.step()
+        } else if let o = obj {
+            objExecuted = true
+            try execute(object: o)
+        }
+    }
+    
+    func lex(token: String) {
         guard let scanner = self.scanner else {
             print("no scanner")
-            return NullType.NULL
+            return
         }
         
         do {
-            if token == Scanner.EOF {
-                return NullType.NULL
-            } else if token == "#" {
+            if token == "#" {
                 scanner.scanComment()
             } else if token == "`" {
                 // todo validate next token as a name
@@ -99,17 +139,19 @@ class ExecContext: CustomStringConvertible {
         } catch {
             print("unexpected error")
         }
-        return nil
     }
     
+    func lookupName(name: NameType) throws -> ObjectType {
+        return try chord.dictionaryStack.load(key: name)
+    }
     func execute(name: NameType) throws -> () {
-        let value = try chord.dictionaryStack.load(key: name)
+        let value = try lookupName(name: name)
         if let op = value as? OperatorType {
             if !op.immediate, let w = chord.compileDef {
                 name.isExecutable = true
                 w.append(name)
             } else {
-                try execute(value)
+                try execute(object: value)
             }
         } else {
             // interpret word (immediate)
@@ -117,12 +159,12 @@ class ExecContext: CustomStringConvertible {
                 name.isExecutable = true
                 w.append(name)
             } else {
-                try execute(value)
+                try execute(object: value)
             }
         }
     }
 
-    func execute(_ obj: ObjectType) throws -> () {
+    func execute(object obj: ObjectType) throws -> () {
         if let op = obj as? OperatorType {
             try op.native(op.def)
         } else if let name = obj as? NameType, name.isExecutable  {

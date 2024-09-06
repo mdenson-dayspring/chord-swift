@@ -609,6 +609,9 @@ values are operators, not procedures or other types.
 |                    _bool proc_ | **if**     | _–_          | Execute proc if bool is true | 
 |             _bool proc1 proc2_ | **ifelse** | _–_          | Execute proc1 if bool is true, proc2 if false | 
 | _initial increment limit proc_ | **for**    | _–_          | Execute proc with values from initial by steps of increment to limit | 
+|                     _int proc_ | **repeat** | _–_          | Execute proc int times | 
+|                         _proc_ | **loop**   | _–_          | Execute proc an indefinite number of times | 
+|                            _–_ | **exit**   | _–_          | Exit innermost active loop | 
 
 ### Type, Attribute, and Conversion Operators
 
